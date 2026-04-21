@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>SocialAgent IA — INNOGROUPE</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,400&display=swap');
+
+  :root {
+    --bg: #f4f3ee;
+    --surface: #ffffff;
+    --surface2: #f0eff8;
+    --text: #18181a;
+    --text2: #5a5a6e;
+    --text3: #9898ae;
+    --border: rgba(90,90,130,0.13);
+    --border2: rgba(90,90,130,0.28);
+    --purple: #6a5ff0;
+    --purple-light: #eeedfd;
+    --purple-dark: #4b3fd4;
+    --green: #1a9e72;
+    --green-light: #e1f5ee;
+    --amber-light: #fef3db;
+    --red-light: #fdeaea;
+    --red: #c0392b;
+    --r-md: 10px;
+    --r-lg: 16px;
+    --r-xl: 22px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 1.5rem 1rem 4rem;
+  }
+
+  .app {
+    max-width: 680px;
+    margin: 0 auto;
+    background: var(--surface);
+    border-radius: var(--r-xl);
+    padding: 1.75rem 1.75rem 2rem;
+    box-shadow: 0 2px 32px rgba(80,70,180,0.08), 0 1px 4px rgba(0,0,0,0.04);
+  }
+
+  /* HEADER */
+  .header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 1.75rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+
+  .logo {
+    width: 44px; height: 44px;
+    background: linear-gradient(135deg, #6a5ff0 0%, #1a9e72 100%);
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .logo svg { width: 22px; height: 22px; }
+
+  .header-text { flex: 1; min-width: 0; }
+  .header-text h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(15px, 3.5vw, 18px);
+    font-weight: 800;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .header-text p {
+    font-size: clamp(11px, 2.5vw, 13px);
+    color: var(--text2);
+    margin-top: 2px;
+  }
+
+  .badge {
+    background: linear-gradient(135deg, #eeedfd, #e1f5ee);
+    color: var(--purple-dark);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 1px solid rgba(106,95,240,0.22);
+    white-space: nowrap;
+    flex-shrink: 0;
+    letter-spacing: 0.01em;
+  }
+
+  /* API BAR */
+  .api-bar {
+    background: var(--amber-light);
+    border: 1px solid rgba(224,154,32,0.35);
+    border-radius: var(--r-md);
+    padding: 12px 14px;
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .api-bar-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .api-bar label { font-size: 12px; font-weight: 600; color: #7a4e0a; white-space: nowrap; margin: 0; }
+  .api-bar input {
+    flex: 1; min-width: 0;
+    border: 1px solid rgba(224,154,32,0.5);
+    border-radius: var(--r-md);
+    padding: 9px 12px;
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    background: white;
+    color: var(--text);
+    outline: none;
+    -webkit-appearance: none;
+    width: 100%;
+  }
+  .api-bar input:focus { border-color: #e09a20; }
+  .api-hint { font-size: 11px; color: #8a5a0a; line-height: 1.5; }
+
+  /* STEPS NAV */
+  .steps-nav {
+    display: flex;
+    gap: 3px;
+    margin-bottom: 1.75rem;
+    background: var(--surface2);
+    border-radius: var(--r-lg);
+    padding: 4px;
+    border: 1px solid var(--border);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .steps-nav::-webkit-scrollbar { display: none; }
+
+  .step-btn {
+    flex: 1;
+    min-width: 58px;
+    padding: 9px 6px;
+    border: none;
+    background: transparent;
+    border-radius: 12px;
+    font-size: clamp(10px, 2.2vw, 12px);
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text3);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    transition: all 0.2s;
+    white-space: nowrap;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .step-btn.active {
+    background: var(--surface);
+    color: var(--text);
+    font-weight: 600;
+    box-shadow: 0 1px 6px rgba(80,70,180,0.1);
+  }
+  .step-num {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 700;
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+  .step-btn.active .step-num { background: var(--purple); color: white; }
+  .step-btn.done .step-num   { background: var(--green);  color: white; }
+
+  @media (max-width: 360px) {
+    .step-label { display: none; }
+    .step-btn   { min-width: 44px; }
+  }
+
+  /* SECTIONS */
+  .section { display: none; }
+  .section.active { display: block; animation: fadeIn 0.25s ease; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* CARD */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+  }
+  .card-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 14px; font-weight: 700;
+    margin-bottom: 1rem;
+    display: flex; align-items: center; gap: 9px;
+  }
+  .card-icon {
+    width: 30px; height: 30px;
+    border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; flex-shrink: 0;
+  }
+
+  /* FORM */
+  label {
+    display: block;
+    font-size: 13px; color: var(--text2);
+    margin-bottom: 5px; font-weight: 500;
+  }
+
+  input[type="text"],
+  input[type="url"],
+  input[type="password"],
+  textarea,
+  select {
+    width: 100%;
+    border: 1px solid var(--border2);
+    border-radius: var(--r-md);
+    padding: 11px 13px;
+    font-size: 15px;
+    font-family: 'DM Sans', sans-serif;
+    background: var(--surface2);
+    color: var(--text);
+    margin-bottom: 14px;
+    outline: none;
+    transition: border-color 0.2s, background 0.2s;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  input:focus, textarea:focus, select:focus {
+    border-color: var(--purple);
+    background: white;
+  }
+  textarea { resize: vertical; min-height: 95px; line-height: 1.6; }
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%239898ae' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 36px;
+  }
+
+  /* NETWORK GRID */
+  .network-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  @media (max-width: 420px) { .network-grid { grid-template-columns: repeat(2, 1fr); } }
+
+  .network-card {
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    padding: 10px 8px 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    background: var(--surface2);
+    position: relative; text-align: center;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    touch-action: manipulation;
+    -webkit-user-select: none;
+  }
+  .network-card * { pointer-events: none; }
+  .network-card:active { transform: scale(0.96); }
+  .network-card.selected { border-color: var(--purple); background: var(--purple-light); }
+  .network-card.selected .net-name { color: var(--purple-dark); font-weight: 600; }
+
+  .net-icon {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .net-name { font-size: 12px; font-weight: 500; color: var(--text2); line-height: 1.2; }
+
+  .net-check {
+    position: absolute; top: 6px; right: 6px;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px; color: transparent;
+    background: white; transition: all 0.15s;
+  }
+  .network-card.selected .net-check { background: var(--purple); border-color: var(--purple); color: white; }
+
+  /* URL FIELDS */
+  .url-section-label {
+    display: block;
+    font-size: 13px; color: var(--text2); font-weight: 500;
+    margin: 6px 0 8px;
+  }
+  .url-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .url-net-icon {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 17px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .url-row input { flex: 1; margin-bottom: 0; font-size: 14px; }
+
+  /* OBJECTIVES */
+  .obj-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px; margin-bottom: 14px;
+  }
+  @media (max-width: 380px) { .obj-grid { grid-template-columns: 1fr; } }
+
+  .obj-chip {
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    padding: 10px 12px;
+    cursor: pointer;
+    font-size: 13px; color: var(--text2);
+    background: var(--surface2);
+    transition: all 0.15s;
+    text-align: center; line-height: 1.4;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+  }
+  .obj-chip:active { transform: scale(0.97); }
+  .obj-chip.selected { border-color: var(--green); background: var(--green-light); color: #0d6647; font-weight: 600; }
+
+  /* BUTTONS */
+  .btn-primary {
+    width: 100%;
+    padding: 14px;
+    background: var(--purple); color: white;
+    border: none;
+    border-radius: var(--r-md);
+    font-size: 15px; font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  .btn-primary:hover  { background: var(--purple-dark); }
+  .btn-primary:active { transform: scale(0.98); }
+
+  .btn-secondary {
+    padding: 11px 18px;
+    background: transparent; color: var(--text2);
+    border: 1px solid var(--border2);
+    border-radius: var(--r-md);
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    white-space: nowrap;
+  }
+  .btn-secondary:hover  { background: var(--surface2); color: var(--text); }
+  .btn-secondary:active { transform: scale(0.97); }
+
+  .nav-btns { display: flex; gap: 10px; margin-top: 1rem; flex-wrap: wrap; }
+  .nav-btns .btn-primary   { flex: 2; min-width: 140px; }
+  .nav-btns .btn-secondary { flex: 1; min-width: 80px; }
+
+  /* TIP */
+  .tip {
+    display: flex; gap: 8px; align-items: flex-start;
+    padding: 10px 12px;
+    background: var(--amber-light);
+    border-radius: var(--r-md);
+    margin-bottom: 10px;
+    font-size: 12px; color: #7a4e0a; line-height: 1.5;
+  }
+  .tip-icon { flex-shrink: 0; font-size: 14px; margin-top: 1px; }
+
+  /* LOADING */
+  .ai-loading { display: none; flex-direction: column; align-items: center; padding: 3.5rem 1rem; gap: 1.25rem; }
+  .ai-loading.show { display: flex; }
+
+  .spinner {
+    width: 48px; height: 48px;
+    border: 2.5px solid var(--border);
+    border-top-color: var(--purple);
+    border-radius: 50%;
+    animation: spin 0.75s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .loading-text { font-size: 15px; color: var(--text2); text-align: center; font-weight: 500; }
+  .loading-sub  { font-size: 13px; color: var(--text3); text-align: center; }
+
+  /* RESULT */
+  .result-section { display: none; }
+  .result-section.show { display: block; animation: fadeIn 0.3s ease; }
+
+  .plan-header {
+    background: linear-gradient(135deg, #eeedfd 0%, #e1f5ee 100%);
+    border: 1px solid rgba(106,95,240,0.2);
+    border-radius: var(--r-lg);
+    padding: 1.25rem; margin-bottom: 1rem;
+    display: flex; align-items: flex-start; gap: 12px;
+  }
+  .plan-icon {
+    width: 42px; height: 42px;
+    background: var(--purple); border-radius: 12px;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .plan-title { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 800; color: var(--purple-dark); }
+  .plan-sub   { font-size: 12px; color: var(--purple); margin-top: 3px; }
+
+  .analysis-output {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    padding: 1.25rem;
+    font-size: 14px; line-height: 1.8;
+    white-space: pre-wrap; word-break: break-word;
+    max-height: 65vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .action-row { display: flex; gap: 8px; margin-top: 1rem; flex-wrap: wrap; }
+  .action-row .btn-secondary { flex: 1; min-width: 110px; text-align: center; }
+
+  /* INLINE VALIDATION ERROR */
+  .inline-error {
+    display: none;
+    background: var(--red-light);
+    border: 1px solid rgba(192,57,43,0.25);
+    border-radius: var(--r-md);
+    padding: 10px 14px;
+    font-size: 13px; color: var(--red);
+    margin-top: 8px;
+    line-height: 1.5;
+    animation: fadeIn 0.2s ease;
+  }
+  .inline-error.show { display: block; }
+
+  /* ERROR */
+  .error-box {
+    background: var(--red-light);
+    border: 1px solid rgba(192,57,43,0.25);
+    border-radius: var(--r-md);
+    padding: 1rem;
+    font-size: 13px; color: var(--red); line-height: 1.6;
+    margin-top: 1rem; display: none;
+  }
+  .error-box.show { display: block; }
+
+  /* RESPONSIVE */
+  @media (max-width: 480px) {
+    body  { padding: 0.75rem 0.5rem 4rem; }
+    .app  { padding: 1.25rem 1rem 1.5rem; border-radius: var(--r-lg); }
+    .header { margin-bottom: 1.25rem; }
+    .card { padding: 1rem; }
+    .analysis-output { font-size: 13px; max-height: 55vh; }
+    .btn-primary { font-size: 14px; padding: 13px; }
+    .plan-title  { font-size: 14px; }
+    .action-row .btn-secondary { font-size: 12px; padding: 10px 8px; }
+  }
+  @media (max-width: 320px) {
+    .app { padding: 1rem 0.75rem; }
+    .steps-nav { padding: 3px; gap: 2px; }
+    .step-btn  { padding: 8px 4px; font-size: 10px; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/>
+      </svg>
+    </div>
+    <div class="header-text">
+      <h1>SocialAgent IA</h1>
+      <p>Stratégie sociale automatisée par IA</p>
+    </div>
+    <span class="badge">Propulsé par INNOGROUPE</span>
+  </div>
+
+  <!-- API KEY -->
+  <div class="api-bar">
+    <div class="api-bar-row">
+      <label>🔑 Clé API :</label>
+      <input type="password" id="api-key" placeholder="sk-ant-api03-…" autocomplete="off" />
+    </div>
+    <span class="api-hint">Obtiens ta clé sur console.anthropic.com → API Keys. Elle n'est jamais sauvegardée.</span>
+  </div>
+
+  <!-- STEPS NAV -->
+  <div class="steps-nav">
+    <button class="step-btn active" onclick="goTo(0)" id="nav0">
+      <span class="step-num">1</span><span class="step-label">Entreprise</span>
+    </button>
+    <button class="step-btn" onclick="goTo(1)" id="nav1">
+      <span class="step-num">2</span><span class="step-label">Réseaux</span>
+    </button>
+    <button class="step-btn" onclick="goTo(2)" id="nav2">
+      <span class="step-num">3</span><span class="step-label">Objectifs</span>
+    </button>
+    <button class="step-btn" onclick="goTo(3)" id="nav3">
+      <span class="step-num">4</span><span class="step-label">Analyse IA</span>
+    </button>
+  </div>
+
+  <!-- STEP 1 : ENTREPRISE -->
+  <div class="section active" id="sec0">
+    <div class="card">
+      <div class="card-title"><div class="card-icon" style="background:#eeedfd;">🏢</div>Décris ton entreprise</div>
+      <label>Nom de ton entreprise / marque</label>
+      <input type="text" id="biz-name" placeholder="Ex: Studio Créatif Haïti, Boutique Mode HTI…" autocomplete="off">
+      <label>Secteur d'activité</label>
+      <select id="biz-sector">
+        <option value="">— Choisir un secteur —</option>
+        <option>Mode &amp; Vêtements</option>
+        <option>Alimentation &amp; Restauration</option>
+        <option>Beauté &amp; Cosmétiques</option>
+        <option>Impression &amp; Communication visuelle</option>
+        <option>Services (coaching, consulting…)</option>
+        <option>E-commerce</option>
+        <option>Art &amp; Créativité</option>
+        <option>Éducation &amp; Formation</option>
+        <option>Santé &amp; Bien-être</option>
+        <option>Technologie</option>
+        <option>Immobilier</option>
+        <option>Autre</option>
+      </select>
+      <label>Décris ton entreprise, tes produits/services, et ta clientèle cible</label>
+      <textarea id="biz-desc" placeholder="Ex: Je propose des services d'impression numérique (flyers, banderoles, cartes de visite…) pour les entreprises et particuliers de Port-au-Prince…"></textarea>
+    </div>
+    <div class="tip"><span class="tip-icon">💡</span>Plus tu es précis, plus l'agent IA créera un plan adapté à ta réalité.</div>
+    <div id="err0" class="inline-error"></div>
+    <div class="nav-btns">
+      <button class="btn-primary" onclick="nextStep(0)">
+        Continuer
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- STEP 2 : RÉSEAUX -->
+  <div class="section" id="sec1">
+    <div class="card">
+      <div class="card-title"><div class="card-icon" style="background:#e1f5ee;">📱</div>Tes réseaux sociaux actifs</div>
+      <label>Sélectionne tes plateformes</label>
+      <div class="network-grid">
+        <div class="network-card" data-net="Instagram" onclick="toggleNet(this)">
+          <div class="net-check">✓</div>
+          <div class="net-icon" style="background:#fce4ec;">📸</div>
+          <span class="net-name">Instagram</span>
+        </div>
+        <div class="network-card" data-net="Facebook" onclick="toggleNet(this)">
+          <div class="net-check">✓</div>
+          <div class="net-icon" style="background:#e3f2fd;">📘</div>
+          <span class="net-name">Facebook</span>
+        </div>
+        <div class="network-card" data-net="TikTok" onclick="toggleNet(this)">
+          <div class="net-check">✓</div>
+          <div class="net-icon" style="background:#f3e5f5;">🎵</div>
+          <span class="net-name">TikTok</span>
+        </div>
+        <div class="network-card" data-net="YouTube" onclick="toggleNet(this)">
+          <div class="net-check">✓</div>
+          <div class="net-icon" style="background:#ffebee;">▶️</div>
+          <span class="net-name">YouTube</span>
+        </div>
+        <div class="network-card" data-net="LinkedIn" onclick="toggleNet(this)">
+          <div class="net-check">✓</div>
+          <div class="net-icon" style="background:#e8f5e9;">💼</div>
+          <span class="net-name">LinkedIn</span>
+        </div>
+        <div class="network-card" data-net="Twitter/X" onclick="toggleNet(this)">
+          <div class="net-check">✓</div>
+          <div class="net-icon" style="background:#f5f5f5;">✖️</div>
+          <span class="net-name">Twitter/X</span>
+        </div>
+      </div>
+      <div id="url-fields"></div>
+    </div>
+    <div class="tip"><span class="tip-icon">🔗</span>Colle le lien exact de ta page (ex: https://instagram.com/moncompte).</div>
+    <div id="err1" class="inline-error"></div>
+    <div class="nav-btns">
+      <button class="btn-secondary" onclick="goTo(0)">← Retour</button>
+      <button class="btn-primary" onclick="nextStep(1)">
+        Continuer
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- STEP 3 : OBJECTIFS -->
+  <div class="section" id="sec2">
+    <div class="card">
+      <div class="card-title"><div class="card-icon" style="background:#e1f5ee;">🎯</div>Tes objectifs de croissance</div>
+      <label>Que veux-tu accomplir ? (plusieurs choix possibles)</label>
+      <div class="obj-grid">
+        <div class="obj-chip" onclick="toggleObj(this)" data-obj="Augmenter le nombre d'abonnés">📈 Plus d'abonnés</div>
+        <div class="obj-chip" onclick="toggleObj(this)" data-obj="Améliorer l'engagement (likes, commentaires, partages)">💬 Meilleur engagement</div>
+        <div class="obj-chip" onclick="toggleObj(this)" data-obj="Vendre plus de produits/services via les réseaux">💰 Générer des ventes</div>
+        <div class="obj-chip" onclick="toggleObj(this)" data-obj="Renforcer la notoriété et la visibilité de la marque">🌟 Notoriété de marque</div>
+        <div class="obj-chip" onclick="toggleObj(this)" data-obj="Construire une communauté fidèle">🤝 Fidéliser ma communauté</div>
+        <div class="obj-chip" onclick="toggleObj(this)" data-obj="Attirer des partenariats et collaborations">🤜 Partenariats</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><div class="card-icon" style="background:#fef3db;">📅</div>Contexte supplémentaire</div>
+      <label>Fréquence de publication actuelle</label>
+      <select id="pub-freq">
+        <option>Pas de publication régulière</option>
+        <option>1 à 2 fois par semaine</option>
+        <option>3 à 5 fois par semaine</option>
+        <option>Tous les jours</option>
+        <option>Plusieurs fois par jour</option>
+      </select>
+      <label>Budget publicité mensuel (facultatif)</label>
+      <select id="budget">
+        <option>Aucun budget pub (croissance organique)</option>
+        <option>Moins de 50$</option>
+        <option>50$ – 200$</option>
+        <option>200$ – 500$</option>
+        <option>Plus de 500$</option>
+      </select>
+      <label>Informations complémentaires (événements, lancement, défis…)</label>
+      <textarea id="extra-info" placeholder="Ex: Je lance une nouvelle offre d'impression grand format ce mois-ci…"></textarea>
+    </div>
+    <div id="err2" class="inline-error"></div>
+    <div class="nav-btns">
+      <button class="btn-secondary" onclick="goTo(1)">← Retour</button>
+      <button class="btn-primary" onclick="launchAnalysis()">🚀 Lancer l'analyse IA</button>
+    </div>
+  </div>
+
+  <!-- STEP 4 : RÉSULTATS -->
+  <div class="section" id="sec3">
+    <div class="ai-loading" id="ai-loading">
+      <div class="spinner"></div>
+      <div class="loading-text">L'agent IA analyse tes données…</div>
+      <div class="loading-sub" id="loading-step">Traitement des informations de ton entreprise…</div>
+    </div>
+
+    <div class="result-section" id="result-box">
+      <div class="plan-header">
+        <div class="plan-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
+          </svg>
+        </div>
+        <div>
+          <div class="plan-title">Plan stratégique hebdomadaire</div>
+          <div class="plan-sub" id="plan-subtitle">Généré par SocialAgent IA · INNOGROUPE</div>
+        </div>
+      </div>
+      <div class="analysis-output" id="analysis-output"></div>
+      <div class="action-row">
+        <button class="btn-secondary" onclick="copyPlan()">📋 Copier</button>
+        <button class="btn-secondary" onclick="downloadPlan()">💾 Télécharger</button>
+      </div>
+      <div style="margin-top:10px;">
+        <button class="btn-primary" onclick="restart()">🔄 Nouvelle analyse</button>
+      </div>
+    </div>
+
+    <div class="error-box" id="error-box">Une erreur est survenue. Vérifie ta clé API et ta connexion internet, puis réessaie.</div>
+  </div>
+
+</div>
+
+<script>
+  let selectedNets = [];
+  let selectedObjs = [];
+  const netIcons = { Instagram:'📸', Facebook:'📘', TikTok:'🎵', YouTube:'▶️', LinkedIn:'💼', 'Twitter/X':'✖️' };
+
+  function goTo(step) {
+    document.querySelectorAll('.section').forEach((s,i) => s.classList.toggle('active', i===step));
+    document.querySelectorAll('.step-btn').forEach((b,i) => {
+      b.classList.remove('active','done');
+      if (i===step) b.classList.add('active');
+      else if (i<step) b.classList.add('done');
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function showError(id, msg) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = '⚠️ ' + msg;
+    el.classList.add('show');
+    el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+  function clearError(id) {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('show');
+  }
+
+  function nextStep(from) {
+    if (from===0) {
+      if (!document.getElementById('biz-name').value.trim() || !document.getElementById('biz-desc').value.trim()) {
+        showError('err0', 'Remplis le nom et la description de ton entreprise.'); return;
+      }
+      clearError('err0');
+    }
+    if (from===1 && selectedNets.length===0) {
+      showError('err1', 'Sélectionne au moins un réseau social.'); return;
+    }
+    clearError('err' + from);
+    goTo(from+1);
+  }
+
+  function toggleNet(el) {
+    // Remonter au .network-card si on clique sur un enfant
+    const card = el.closest('.network-card') || el;
+    const net = card.dataset.net;
+    if (!net) return;
+    card.classList.toggle('selected');
+    selectedNets = card.classList.contains('selected') ? [...selectedNets, net] : selectedNets.filter(n=>n!==net);
+    renderUrlFields();
+  }
+
+  function renderUrlFields() {
+    const c = document.getElementById('url-fields');
+    c.innerHTML = '';
+    if (!selectedNets.length) return;
+    const lbl = document.createElement('span');
+    lbl.className = 'url-section-label';
+    lbl.textContent = 'Liens vers tes pages';
+    c.appendChild(lbl);
+    selectedNets.forEach(net => {
+      const row = document.createElement('div');
+      row.className = 'url-row';
+      row.innerHTML = `<div class="url-net-icon">${netIcons[net]}</div><input type="url" id="url-${net}" placeholder="https://.../${net.toLowerCase()}/toncompte" autocomplete="off" />`;
+      c.appendChild(row);
+    });
+  }
+
+  function toggleObj(el) {
+    const chip = el.closest('.obj-chip') || el;
+    const obj = chip.dataset.obj;
+    if (!obj) return;
+    chip.classList.toggle('selected');
+    selectedObjs = chip.classList.contains('selected') ? [...selectedObjs, obj] : selectedObjs.filter(o=>o!==obj);
+  }
+
+  async function launchAnalysis() {
+    if (selectedObjs.length===0) { showError('err2', 'Sélectionne au moins un objectif.'); return; }
+    clearError('err2');
+    const apiKey = document.getElementById('api-key').value.trim();
+    if (!apiKey) { showError('err2', 'Entre ta clé API Anthropic en haut de la page.'); return; }
+
+    goTo(3);
+    document.getElementById('ai-loading').classList.add('show');
+    document.getElementById('result-box').classList.remove('show');
+    document.getElementById('error-box').classList.remove('show');
+
+    const bizName   = document.getElementById('biz-name').value.trim();
+    const bizSector = document.getElementById('biz-sector').value;
+    const bizDesc   = document.getElementById('biz-desc').value.trim();
+    const freq      = document.getElementById('pub-freq').value;
+    const budget    = document.getElementById('budget').value;
+    const extra     = document.getElementById('extra-info').value.trim();
+    const netLinks  = selectedNets.map(net => `${net}: ${document.getElementById('url-'+net)?.value.trim()||'non fourni'}`).join('\n');
+
+    const msgs = ['Analyse de ton profil d\'entreprise…','Évaluation de ta présence sociale…','Identification des opportunités…','Construction du plan hebdomadaire…','Finalisation des recommandations…'];
+    let mi = 0;
+    const iv = setInterval(() => { document.getElementById('loading-step').textContent = msgs[++mi % msgs.length]; }, 2200);
+
+    const prompt = `Tu es un expert en stratégie de marketing digital et en croissance sur les réseaux sociaux. Analyse les informations suivantes et génère un plan stratégique hebdomadaire complet, actionnable et personnalisé.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+INFORMATIONS SUR L'ENTREPRISE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Nom: ${bizName}
+Secteur: ${bizSector||'Non précisé'}
+Description: ${bizDesc}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PRÉSENCE SUR LES RÉSEAUX SOCIAUX
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+${netLinks}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+OBJECTIFS DE CROISSANCE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+${selectedObjs.map((o,i)=>`${i+1}. ${o}`).join('\n')}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CONTEXTE OPÉRATIONNEL
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Fréquence actuelle: ${freq}
+Budget pub: ${budget}
+${extra?'Infos supplémentaires: '+extra:''}
+
+Génère un plan structuré avec ces sections:
+
+📊 DIAGNOSTIC RAPIDE
+Forces, points à améliorer, opportunités sur les plateformes mentionnées.
+
+🎯 STRATÉGIE DE LA SEMAINE
+Thème central et angle narratif recommandé.
+
+📅 PLAN JOUR PAR JOUR (Lundi → Dimanche)
+Pour chaque jour: plateforme recommandée, type de contenu, idée précise et créative, heure optimale de publication, objectif visé.
+
+🔥 3 ACTIONS PRIORITAIRES
+Les 3 actions à fort impact à réaliser cette semaine.
+
+💡 ATTIRER LES NON-ABONNÉS
+Stratégies pour convertir les visiteurs qui ont vu des posts/stories/reels sans s'abonner.
+
+📈 INDICATEURS À SUIVRE
+Métriques clés à monitorer cette semaine.
+
+🤝 TENDANCE OU COLLABORATION
+Une idée de tendance ou collaboration pour booster la visibilité.
+
+Sois concret, créatif et adapté au contexte haïtien/caribéen si pertinent. Utilise des émojis pour rendre le plan lisible.`;
+
+    try {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true'
+        },
+        body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 2000, messages: [{ role: 'user', content: prompt }] })
+      });
+      clearInterval(iv);
+      const data = await res.json();
+      if (data.error) throw new Error(data.error.message);
+      const text = data.content?.map(c=>c.text||'').join('') || '';
+      document.getElementById('ai-loading').classList.remove('show');
+      document.getElementById('analysis-output').textContent = text;
+      document.getElementById('plan-subtitle').textContent = `Plan pour ${bizName} · INNOGROUPE`;
+      document.getElementById('result-box').classList.add('show');
+    } catch(err) {
+      clearInterval(iv);
+      document.getElementById('ai-loading').classList.remove('show');
+      document.getElementById('error-box').textContent = 'Erreur : ' + err.message;
+      document.getElementById('error-box').classList.add('show');
+    }
+  }
+
+  function copyPlan() {
+    navigator.clipboard.writeText(document.getElementById('analysis-output').textContent)
+      .then(() => alert('Plan copié dans le presse-papier !'))
+      .catch(() => alert('Copie impossible, sélectionne le texte manuellement.'));
+  }
+
+  function downloadPlan() {
+    const text = document.getElementById('analysis-output').textContent;
+    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'plan_social_hebdomadaire_innogroupe.txt';
+    a.click();
+  }
+
+  function restart() {
+    selectedNets = []; selectedObjs = [];
+    document.querySelectorAll('.network-card').forEach(c => c.classList.remove('selected'));
+    document.querySelectorAll('.obj-chip').forEach(c => c.classList.remove('selected'));
+    document.getElementById('url-fields').innerHTML = '';
+    ['biz-name','biz-desc','extra-info'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('biz-sector').selectedIndex = 0;
+    goTo(0);
+  }
+</script>
+</body>
+</html>
